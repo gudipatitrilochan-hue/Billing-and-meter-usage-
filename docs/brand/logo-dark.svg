@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="360" height="80" role="img" aria-label="MeterLedger">
+  <g transform="translate(8 8)">
+  <defs>
+    <linearGradient id="ml-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c1c1f"/><stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="ml-bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#16a34a"/>
+    </linearGradient>
+    <radialGradient id="ml-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#86efac" stop-opacity=".55"/><stop offset="1" stop-color="#86efac" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#ml-bg)"/>
+  <rect x=".5" y=".5" width="63" height="63" rx="15.5" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
+  <!-- graduated tiers -->
+  <rect x="15" y="34" width="8" height="12" rx="3" fill="url(#ml-bar)" opacity=".55"/>
+  <rect x="28" y="26" width="8" height="20" rx="3" fill="url(#ml-bar)" opacity=".8"/>
+  <rect x="41" y="17" width="8" height="29" rx="3" fill="url(#ml-bar)"/>
+  <!-- usage line + live reading -->
+  <path d="M13 31 L27 22.5 L36 25 L47 12.5" fill="none" stroke="#f0fdf4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="47" cy="12.5" r="7" fill="url(#ml-glow)"/>
+  <circle cx="47" cy="12.5" r="2.8" fill="#f0fdf4"/>
+  <!-- ledger lines -->
+  <path d="M13 51 H51" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M13 55.5 H37" stroke="#ffffff" stroke-opacity=".22" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <text x="86" y="47" font-family="Inter, 'Inter Tight', 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" letter-spacing="-1" fill="#fafafa"><tspan font-weight="500">Meter</tspan><tspan font-weight="800">Ledger</tspan></text>
+  <text x="88" y="66" font-family="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace" font-size="10.5" letter-spacing="1.6" fill="#a1a1aa">USAGE-BASED BILLING</text>
+</svg>
