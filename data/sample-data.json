@@ -1,0 +1,70 @@
+{
+  "meters": [
+    { "id": "api_calls", "name": "API calls", "unit": "call", "aggregation": "sum" },
+    { "id": "emails_sent", "name": "Emails sent", "unit": "email", "aggregation": "sum" }
+  ],
+  "plans": [
+    {
+      "id": "free",
+      "name": "Free",
+      "base_fee_paise": 0,
+      "tiers": {
+        "api_calls": [
+          { "from": 1, "to": 10000, "per_1000": 0 },
+          { "from": 10001, "to": null, "per_1000": 2500 }
+        ],
+        "emails_sent": [
+          { "from": 1, "to": null, "per_1000": 10000 }
+        ]
+      }
+    },
+    {
+      "id": "starter",
+      "name": "Starter",
+      "base_fee_paise": 49900,
+      "tiers": {
+        "api_calls": [
+          { "from": 1, "to": 10000, "per_1000": 0 },
+          { "from": 10001, "to": 100000, "per_1000": 2000 },
+          { "from": 100001, "to": null, "per_1000": 1500 }
+        ],
+        "emails_sent": [
+          { "from": 1, "to": null, "per_1000": 10000 }
+        ]
+      }
+    },
+    {
+      "id": "growth",
+      "name": "Growth",
+      "base_fee_paise": 199900,
+      "tiers": {
+        "api_calls": [
+          { "from": 1, "to": 50000, "per_1000": 0 },
+          { "from": 50001, "to": 500000, "per_1000": 1200 },
+          { "from": 500001, "to": null, "per_1000": 800 }
+        ],
+        "emails_sent": [
+          { "from": 1, "to": 5000, "per_1000": 0 },
+          { "from": 5001, "to": null, "per_1000": 8000 }
+        ]
+      }
+    }
+  ],
+  "tenants": [
+    { "id": "t_shopkart", "name": "ShopKart", "plan_id": "starter" },
+    { "id": "t_tinybot", "name": "TinyBot", "plan_id": "free" },
+    { "id": "t_paynest", "name": "PayNest", "plan_id": "growth" },
+    { "id": "t_quickcab", "name": "QuickCab", "plan_id": "starter" },
+    { "id": "t_mediminder", "name": "MediMinder", "plan_id": "free" },
+    { "id": "t_lumenlabs", "name": "Lumen Labs", "plan_id": "growth" }
+  ],
+  "events": [
+    {
+      "tenant_id": "t_shopkart",
+      "event_id": "shk-2026-09-01-0001",
+      "meter": "api_calls",
+      "quantity": 500,
+      "timestamp": "2026-09-01T04:51:10Z"
+    }
+  ]
+}

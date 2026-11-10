@@ -1,0 +1,2 @@
+# Week 1: pricing, schema and seed use only the Python standard library.
+pytest>=8.0
