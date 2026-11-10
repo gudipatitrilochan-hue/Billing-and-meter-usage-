@@ -1,4 +1,11 @@
 <p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/logo-dark.svg">
+    <img src="docs/brand/logo-light.svg" alt="MeterLedger logo" width="420">
+  </picture>
+</p>
+
+<p align="center">
   <img src="docs/brand/banner.svg" alt="MeterLedger: meter every event, bill it exactly once" width="100%">
 </p>
 
