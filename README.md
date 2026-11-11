@@ -31,7 +31,8 @@ an invoice with one line per tier, in exact integer paise.
 
 📄 [Product requirements (PDF)](PST_AD_162_UsageBasedBilling_PRD_v1.0.docx.pdf) ·
 📝 [One-page brief](docs/BRIEF.md) ·
-🗺️ [Architecture & flow charts](docs/ARCHITECTURE.md)
+🗺️ [Architecture & flow charts](docs/ARCHITECTURE.md) ·
+✅ [Week 1 summary](docs/WEEK1_SUMMARY.md)
 
 ---
 
@@ -47,6 +48,8 @@ an invoice with one line per tier, in exact integer paise.
 | SQL query that prints monthly totals | [`scripts/monthly_totals.sql`](scripts/monthly_totals.sql) |
 
 **Checkpoint:** six pricing tests green ✔ · seed totals printed per tenant ✔
+
+📋 Full write-up with results, decisions and numbers: **[docs/WEEK1_SUMMARY.md](docs/WEEK1_SUMMARY.md)**
 
 ## Quick start
 
@@ -176,7 +179,7 @@ Coming next (PRD Section 7): `app/main.py`, `models.py`, `ingest.py`, `invoices.
 
 ## Roadmap
 
-- [x] **Week 1: Pricing & data.** Brief, repo, pricing + six tests, schema, seed, totals query
+- [x] **Week 1: Pricing & data.** Brief, repo, pricing + six tests, schema, seed, totals query ([summary](docs/WEEK1_SUMMARY.md))
 - [ ] **Week 2: Ingestion API.** Auth dependencies, `POST /events` and `/events/batch` with idempotency, usage / daily / estimate, tenants and plans, `retry_storm.py`
 - [ ] **Week 3: Invoices & console.** Generate / finalize / pay / void, screens S1–S7, tenant portal S9
 - [ ] **Week 4: Analysis & ship.** CSV export, `report.py` (3 charts), simulator S8, accessibility pass, deploy, demo video
