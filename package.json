@@ -1,0 +1,9 @@
+{
+  "name": "meterledger-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:frontend": "node --test frontend-tests/",
+    "dev": "node scripts/dev-server.mjs"
+  }
+}

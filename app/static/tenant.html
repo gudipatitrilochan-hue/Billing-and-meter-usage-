@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tenant · MeterLedger</title>
+  <meta name="description" content="Tenant usage, plan and estimate.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Crect x='8' y='17' width='4' height='7' rx='2' fill='%2322c55e'/%3E%3Crect x='14' y='12' width='4' height='12' rx='2' fill='%2322c55e'/%3E%3Crect x='20' y='8' width='4' height='16' rx='2' fill='%2322c55e'/%3E%3C/svg%3E">
+  <script src="js/boot.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="tenant">
+  <div class="ml-curtain" aria-hidden="true"><div class="ml-curtain__mark"><span class="ml-logo-dot"></span>MeterLedger</div></div>
+  <a class="ml-skip" href="#main">Skip to content</a>
+  <div class="ml-app">
+    <main id="main" class="ml-main" tabindex="-1">
+
+      <section class="ml-card d-flex flex-wrap gap-4 align-items-center mb-4" id="tenant-head" aria-label="Tenant summary"></section>
+      <div id="tenant-body">
+        <div id="meters" class="mb-4"></div>
+        <div class="ml-split">
+          <section class="ml-card" aria-labelledby="daily-title">
+            <div class="ml-card__head"><div><h2 class="ml-h2" id="daily-title">Daily usage</h2><p class="ml-card__sub" id="chart-total">&nbsp;</p></div><div class="ml-chips" id="meter-chips" role="group" aria-label="Meter"><button class="ml-chip is-on" type="button" data-meter="api_calls" aria-pressed="true">API calls</button><button class="ml-chip" type="button" data-meter="emails_sent" aria-pressed="false">Emails</button></div></div>
+            <div class="ml-chartbox"><canvas id="daily-chart" role="img" aria-label="Daily usage bar chart"></canvas></div>
+          </section>
+          <section class="ml-card ml-card--flush" id="estimate" aria-label="Invoice preview"></section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="js/pages/tenant.js"></script>
+</body>
+</html>

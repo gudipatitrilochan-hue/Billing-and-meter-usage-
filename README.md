@@ -32,7 +32,8 @@ an invoice with one line per tier, in exact integer paise.
 📄 [Product requirements (PDF)](PST_AD_162_UsageBasedBilling_PRD_v1.0.docx.pdf) ·
 📝 [One-page brief](docs/BRIEF.md) ·
 🗺️ [Architecture & flow charts](docs/ARCHITECTURE.md) ·
-✅ [Week 1 summary](docs/WEEK1_SUMMARY.md)
+✅ [Week 1 summary](docs/WEEK1_SUMMARY.md) ·
+🖥️ [Frontend guide](docs/FRONTEND.md)
 
 ---
 
@@ -75,6 +76,28 @@ PayNest      growth   2026-09     521,300    8,120     388         ₹7,819.00
 
 The 83 skipped rows are retries planted in the CSV on purpose: a spreadsheet would bill them twice.
 Query the database directly with `sqlite3 -header -column data/meterledger.db < scripts/monthly_totals.sql`.
+
+## Frontend: the MeterLedger console (S1–S9)
+
+All nine PRD screens are built with HTML, CSS, JavaScript modules and GSAP animations, with light and dark themes.
+Until the FastAPI backend lands, they run on an in-browser **mock API** that follows the PRD Section 9 contract,
+so switching to the real backend is one setting (`API_MODE` in `app/static/js/config.js`).
+
+```bash
+npm run dev               # → http://localhost:5173 (Node 18+, nothing to install)
+npm run test:frontend     # PRD cases C1–C6 against the JavaScript pricing mirror
+```
+
+On the sign-in page, **Demo keys** lists the admin key and one key per demo tenant. Click a key, then **Sign in**.
+
+| Screen | Page |
+|---|---|
+| S1 Sign in · S2 Overview · S3 Tenants | `index.html` · `overview.html` · `tenants.html` |
+| S4 Tenant detail · S5 Plans & pricing | `tenant.html` · `plans.html` |
+| S6 Invoices · S7 Invoice detail | `invoices.html` · `invoice.html` |
+| S8 Event simulator (with retry storm) · S9 Tenant portal | `simulator.html` · `portal.html` |
+
+Full screen-by-screen guide, theming and the backend hand-off: **[docs/FRONTEND.md](docs/FRONTEND.md)**
 
 ## How the money works
 
@@ -160,6 +183,7 @@ app/
   pricing.py              price_tiers(), build_invoice(): pure functions, no I/O
   db.py                   sqlite3 helpers: schema, record_event (idempotent), monthly_usage
   schema.sql              PRD Section 8 data model
+  static/                 frontend: one HTML page per screen, css/, js/ (GSAP motion, mock API)
 data/
   sample-data.json        meters, 3 plans with tiers, 6 tenants
   cloud_api_usage_sample.csv   simulated metering export, 3 months, with planted retries
@@ -167,15 +191,18 @@ scripts/
   seed.py                 build the database and print totals per tenant
   monthly_totals.sql      the monthly totals query
   generate_sample_csv.py  regenerates the CSV deterministically
+  dev-server.mjs          static server for the frontend (npm run dev)
 tests/
   test_pricing.py         C1–C6 + tier rules
   test_seed.py            seed totals, retries stored once, keys hashed
+frontend-tests/
+  pricing.test.mjs        C1–C6 against the JavaScript pricing mirror
 docs/
-  BRIEF.md · ARCHITECTURE.md · brand/
+  BRIEF.md · ARCHITECTURE.md · FRONTEND.md · brand/
 ```
 
 Coming next (PRD Section 7): `app/main.py`, `models.py`, `ingest.py`, `invoices.py`, `auth.py`,
-`app/static/` (screens S1–S9), `scripts/retry_storm.py`, `analysis/report.py`, `.env.example`.
+`scripts/retry_storm.py`, `analysis/report.py`, `.env.example`.
 
 ## Roadmap
 
