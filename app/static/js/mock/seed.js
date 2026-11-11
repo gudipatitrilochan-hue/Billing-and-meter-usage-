@@ -57,6 +57,7 @@ const PLANS = [
     tiers: {
       api_calls: [{ from: 1, to: 10000, per_1000: 0 }, { from: 10001, to: null, per_1000: 2500 }],
       emails_sent: [{ from: 1, to: null, per_1000: 10000 }],
+      pdf_links: [{ from: 1, to: null, per_1000: 2000000 }], // ₹20 per PDF
     },
   },
   {
@@ -68,6 +69,7 @@ const PLANS = [
         { from: 100001, to: null, per_1000: 1500 },
       ],
       emails_sent: [{ from: 1, to: null, per_1000: 10000 }],
+      pdf_links: [{ from: 1, to: null, per_1000: 2000000 }], // ₹20 per PDF
     },
   },
   {
@@ -79,6 +81,7 @@ const PLANS = [
         { from: 500001, to: null, per_1000: 800 },
       ],
       emails_sent: [{ from: 1, to: 5000, per_1000: 0 }, { from: 5001, to: null, per_1000: 8000 }],
+      pdf_links: [{ from: 1, to: null, per_1000: 2000000 }], // ₹20 per PDF
     },
   },
 ];
@@ -221,16 +224,18 @@ export async function buildSeed(now = Date.now()) {
   }
 
   return {
-    version: 1,
+    version: 2,
     seeded_at: new Date(now).toISOString(),
     meters: [
       { id: "api_calls", name: "API calls", unit: "call", aggregation: "sum" },
       { id: "emails_sent", name: "Emails sent", unit: "email", aggregation: "sum" },
+      { id: "pdf_links", name: "PDF links", unit: "pdf", aggregation: "sum" },
     ],
     plans,
     tenants,
     events,
     invoices,
+    pdfs: [],
     seq: { invoice: invoiceId, numbers },
     demoKeys,
   };

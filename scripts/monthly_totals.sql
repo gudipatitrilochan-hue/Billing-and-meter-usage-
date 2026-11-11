@@ -6,6 +6,7 @@ SELECT
     e.period                                                            AS period,
     SUM(CASE WHEN e.meter_id = 'api_calls'   THEN e.quantity ELSE 0 END) AS api_calls,
     SUM(CASE WHEN e.meter_id = 'emails_sent' THEN e.quantity ELSE 0 END) AS emails_sent,
+    SUM(CASE WHEN e.meter_id = 'pdf_links'   THEN e.quantity ELSE 0 END) AS pdf_links,
     COUNT(*)                                                            AS events
 FROM usage_events AS e
 JOIN tenants AS t ON t.id = e.tenant_id

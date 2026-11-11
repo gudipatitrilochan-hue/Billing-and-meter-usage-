@@ -24,3 +24,9 @@ export const METERS = [
   { id: "api_calls", name: "API calls", unit: "call", short: "Calls" },
   { id: "emails_sent", name: "Emails sent", unit: "email", short: "Emails" },
 ];
+
+// Meters billed per item rather than per 1,000 units. They appear on estimates and invoices,
+// but not in the usage charts. PDF links: ₹20 per PDF uploaded (POST /pdfs).
+export const ITEM_METERS = [
+  { id: "pdf_links", name: "PDF links", unit: "PDF", short: "PDFs", icon: "file" },
+];

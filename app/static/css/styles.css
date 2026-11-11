@@ -615,3 +615,19 @@ h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; colo
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- PDF links (pdfs.html) ---------- */
+.ml-drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 168px; padding: 24px; text-align: center; border: 1.5px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--surface-2); cursor: pointer; transition: border-color .2s, background .2s, transform .2s; }
+.ml-drop:hover, .ml-drop.is-over { border-color: var(--accent); background: var(--accent-soft); }
+.ml-drop.is-over { transform: scale(1.01); }
+.ml-drop:focus-within { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ml-drop.has-file { border-style: solid; border-color: var(--accent); }
+.ml-drop__icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12'/%3E%3C/svg%3E") center / 28px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12'/%3E%3C/svg%3E") center / 28px no-repeat; }
+.ml-drop__title { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.ml-drop__meta { font-size: 13px; color: var(--ink-2); }
+.ml-linkout { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--accent); border-radius: var(--radius-md); background: var(--accent-soft); }
+.ml-linkout__row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ml-linkout code { flex: 1 1 220px; min-width: 0; overflow-wrap: anywhere; font-family: var(--font-mono); font-size: 13px; color: var(--ink); }
+.ml-steps { padding-left: 20px; margin: 0 0 16px; display: grid; gap: 10px; color: var(--ink-2); font-size: 14px; }
+.ml-steps strong { color: var(--ink); }
+.ml-filecell { display: inline-flex; align-items: center; gap: 8px; min-width: 0; overflow-wrap: anywhere; }

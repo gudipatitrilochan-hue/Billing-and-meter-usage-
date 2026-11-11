@@ -1,7 +1,8 @@
 {
   "meters": [
     { "id": "api_calls", "name": "API calls", "unit": "call", "aggregation": "sum" },
-    { "id": "emails_sent", "name": "Emails sent", "unit": "email", "aggregation": "sum" }
+    { "id": "emails_sent", "name": "Emails sent", "unit": "email", "aggregation": "sum" },
+    { "id": "pdf_links", "name": "PDF links", "unit": "pdf", "aggregation": "sum" }
   ],
   "plans": [
     {
@@ -15,6 +16,9 @@
         ],
         "emails_sent": [
           { "from": 1, "to": null, "per_1000": 10000 }
+        ],
+        "pdf_links": [
+          { "from": 1, "to": null, "per_1000": 2000000 }
         ]
       }
     },
@@ -30,6 +34,9 @@
         ],
         "emails_sent": [
           { "from": 1, "to": null, "per_1000": 10000 }
+        ],
+        "pdf_links": [
+          { "from": 1, "to": null, "per_1000": 2000000 }
         ]
       }
     },
@@ -46,6 +53,9 @@
         "emails_sent": [
           { "from": 1, "to": 5000, "per_1000": 0 },
           { "from": 5001, "to": null, "per_1000": 8000 }
+        ],
+        "pdf_links": [
+          { "from": 1, "to": null, "per_1000": 2000000 }
         ]
       }
     }

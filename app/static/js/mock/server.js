@@ -28,7 +28,7 @@ async function load() {
     if (raw) {
       try { db = JSON.parse(raw); } catch (e) { db = null; }
     }
-    if (!db || db.version !== 1) {
+    if (!db || db.version !== 2) {
       db = await buildSeed();
       persist();
     }
@@ -98,14 +98,14 @@ function tenantOut(t) {
 }
 
 function usageFor(tenantId, period) {
-  const out = { api_calls: 0, emails_sent: 0 };
+  const out = { api_calls: 0, emails_sent: 0, pdf_links: 0 };
   for (const e of db.events) if (e[0] === tenantId && periodOf(e[4]) === period) out[e[2]] += e[3];
   return out;
 }
 
 function usageAll(period) {
   const out = {};
-  for (const t of db.tenants) out[t.id] = { api_calls: 0, emails_sent: 0 };
+  for (const t of db.tenants) out[t.id] = { api_calls: 0, emails_sent: 0, pdf_links: 0 };
   for (const e of db.events) if (periodOf(e[4]) === period && out[e[0]]) out[e[0]][e[2]] += e[3];
   return out;
 }
@@ -368,7 +368,7 @@ route("POST", "/plans", async (a, q, body) => {
     const err = validateTiers(tiers && tiers[m]);
     if (err) fail(400, "invalid_tiers", `${m}: ${err.message}`);
   }
-  const plan = { id, name: name.trim(), base_fee_paise, currency: "INR", active: 1, created_at: nowIso(), tiers: { api_calls: tiers.api_calls, emails_sent: tiers.emails_sent } };
+  const plan = { id, name: name.trim(), base_fee_paise, currency: "INR", active: 1, created_at: nowIso(), tiers: { api_calls: tiers.api_calls, emails_sent: tiers.emails_sent, pdf_links: tiers.pdf_links || [{ from: 1, to: null, per_1000: 2000000 }] } };
   db.plans.push(plan);
   persist();
   return { status: 201, body: planOut(plan) };
@@ -503,6 +503,49 @@ route("GET", "/export/usage.csv", async (a, q) => {
   }
   const rows = [...agg.entries()].sort((x, y) => x[0].localeCompare(y[0])).map(([k, v]) => `${k},${v}`);
   return { body: "tenant,meter,day,quantity\n" + rows.join("\n") + "\n", contentType: "text/csv" };
+});
+
+// ---------------- PDF links (₹20 per PDF) ----------------
+// Mirrors POST /api/pdfs: the page keeps the file as a blob: URL (mock mode stores nothing on a
+// server), and the upload is recorded as one pdf_links usage event so it is priced like any other.
+const IDEM_RE = /^[A-Za-z0-9_-]{1,60}$/;
+const pdfOut = (r) => ({ token: r.token, link: r.link, filename: r.filename, size_bytes: r.size_bytes, created_at: r.created_at, period: periodOf(Date.parse(r.created_at)) });
+
+route("POST", "/pdfs", async (a, q, body) => {
+  requireAny(a);
+  if (a.role !== "tenant") fail(403, "tenant_only", "Upload PDFs with a tenant key");
+  const t = a.tenant;
+  const { filename, size_bytes, is_pdf, link, idempotency_key } = body || {};
+  if (idempotency_key != null && !IDEM_RE.test(idempotency_key)) fail(400, "bad_idempotency_key", "Idempotency-Key must be 1 to 60 letters, digits, - or _");
+  db.pdfs = db.pdfs || [];
+  const token = await tokenUrlSafe(18);
+  const eventId = "pdf-" + (idempotency_key || token);
+  const existing = db.pdfs.find((r) => r.tenant_id === t.id && r.event_id === eventId);
+  if (existing) return { status: 200, body: { ...pdfOut(existing), status: "duplicate", charged_paise: 0 } };
+  if (!size_bytes) fail(400, "empty_file", "The file is empty");
+  if (size_bytes > 10 * 1024 * 1024) fail(413, "file_too_large", "A PDF can be at most 10 MB");
+  if (!is_pdf) fail(415, "not_a_pdf", "Only PDF files can be uploaded");
+  const plan = planById(t.plan_id);
+  if (!plan.tiers.pdf_links) fail(409, "pdf_not_priced", `The ${plan.name} plan has no price for PDF links`);
+  const now = Date.now();
+  const period = periodOf(now);
+  if (isClosed(t.id, period)) fail(409, "period_closed", `The ${period} invoice is finalized; new charges for it are rejected`);
+  const before = estimate(t, period).total_paise;
+  const row = [t.id, eventId, "pdf_links", 1, now, now];
+  db.events.push(row);
+  index.set(t.id + "|" + eventId, row);
+  const rec = { token, tenant_id: t.id, event_id: eventId, filename: String(filename || "document.pdf").slice(0, 120), size_bytes, link, created_at: new Date(now).toISOString().replace(/\.\d{3}Z$/, "Z") };
+  db.pdfs.push(rec);
+  const after = estimate(t, period).total_paise;
+  persist();
+  return { status: 201, body: { ...pdfOut(rec), status: "accepted", charged_paise: after - before, estimate_total_paise: after } };
+});
+
+route("GET", "/pdfs", async (a, q) => {
+  const t = scopeTenant(a, q);
+  const period = q.get("period");
+  const rows = (db.pdfs || []).filter((r) => r.tenant_id === t.id).map(pdfOut).filter((r) => !period || r.period === period);
+  return { body: rows.reverse() };
 });
 
 // ---------------- entry ----------------

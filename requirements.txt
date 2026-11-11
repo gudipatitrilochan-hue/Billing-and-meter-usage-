@@ -1,2 +1,8 @@
-# Week 1: pricing, schema and seed use only the Python standard library.
+# Pricing, schema and seed use only the Python standard library.
+# The API server (app/main.py) and the PDF links feature:
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+# Tests:
 pytest>=8.0
+httpx>=0.27
