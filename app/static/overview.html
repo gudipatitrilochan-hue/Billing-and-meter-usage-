@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overview · MeterLedger</title>
+  <meta name="description" content="Usage and revenue across all tenants.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Crect x='8' y='17' width='4' height='7' rx='2' fill='%2322c55e'/%3E%3Crect x='14' y='12' width='4' height='12' rx='2' fill='%2322c55e'/%3E%3Crect x='20' y='8' width='4' height='16' rx='2' fill='%2322c55e'/%3E%3C/svg%3E">
+  <script src="js/boot.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="overview">
+  <div class="ml-curtain" aria-hidden="true"><div class="ml-curtain__mark"><span class="ml-logo-dot"></span>MeterLedger</div></div>
+  <a class="ml-skip" href="#main">Skip to content</a>
+  <div class="ml-app">
+    <main id="main" class="ml-main" tabindex="-1">
+
+      <section class="ml-panel ml-hero ml-ov__hero" aria-label="This month">
+        <div class="ml-ov__top">
+          <div>
+            <span class="ml-eyebrow ml-eyebrow--dark ml-eyebrow--live"><i></i><span id="hero-period">Live</span></span>
+            <div class="ml-ov__big" id="hero-revenue" aria-live="polite">₹0.00</div>
+            <p class="ml-hero__sub">Estimated revenue so far this month: base fees plus every tier, priced live from metered usage.</p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <a class="btn ml-btn ml-btn--onpanel" href="invoices.html" data-magnetic="0.2">Generate drafts</a>
+            <a class="btn ml-btn ml-btn--panelghost" href="simulator.html">Retry storm</a>
+          </div>
+        </div>
+        <div class="ml-ov__chart"><canvas id="hero-chart" role="img" aria-label="Daily API calls across all tenants this month"></canvas></div>
+        <div class="ml-grid-4" id="kpis"></div>
+      </section>
+      <div class="ml-split mt-4">
+        <section class="ml-card ml-card--flush" aria-labelledby="feed-title">
+          <div class="ml-card__head"><div><h2 class="ml-h2" id="feed-title">Recent events</h2><p class="ml-card__sub">Last 20 usage events received, newest first.</p></div><span class="ml-eyebrow ml-eyebrow--live"><i></i>Live</span></div>
+          <div id="feed" class="mt-3"></div>
+        </section>
+        <section class="ml-card" aria-labelledby="rank-title">
+          <div class="ml-card__head"><div><h2 class="ml-h2" id="rank-title">Top tenants</h2><p class="ml-card__sub">By estimated bill this month.</p></div></div>
+          <ol class="ml-rank" id="rank"></ol>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="js/pages/overview.js"></script>
+</body>
+</html>

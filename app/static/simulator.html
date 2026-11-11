@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event simulator · MeterLedger</title>
+  <meta name="description" content="Send usage events and run the retry storm.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0c'/%3E%3Crect x='8' y='17' width='4' height='7' rx='2' fill='%2322c55e'/%3E%3Crect x='14' y='12' width='4' height='12' rx='2' fill='%2322c55e'/%3E%3Crect x='20' y='8' width='4' height='16' rx='2' fill='%2322c55e'/%3E%3C/svg%3E">
+  <script src="js/boot.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="simulator">
+  <div class="ml-curtain" aria-hidden="true"><div class="ml-curtain__mark"><span class="ml-logo-dot"></span>MeterLedger</div></div>
+  <a class="ml-skip" href="#main">Skip to content</a>
+  <div class="ml-app">
+    <main id="main" class="ml-main" tabindex="-1">
+
+      <div class="ml-grid-2">
+        <section class="ml-card ml-sim-card" aria-labelledby="single-title">
+          <div class="ml-card__head"><div><h2 class="ml-h2" id="single-title">Single event</h2><p class="ml-card__sub">POST /api/events — send it, then retry it.</p></div></div>
+          <form id="single-form" novalidate>
+            <div class="ml-field"><label class="ml-label" for="ev-id">event_id</label>
+              <div class="ml-inputgroup"><input class="form-control ml-input ml-input--mono" id="ev-id" maxlength="64" autocomplete="off"><button class="btn ml-btn ml-btn--ghost" type="button" id="ev-gen">Generate</button></div></div>
+            <div class="ml-grid-2">
+              <div class="ml-field"><label class="ml-label" for="ev-meter">Meter</label><select class="form-select ml-input" id="ev-meter"><option value="api_calls">api_calls</option><option value="emails_sent">emails_sent</option></select></div>
+              <div class="ml-field"><label class="ml-label" for="ev-qty">Quantity</label><input class="form-control ml-input ml-num" id="ev-qty" type="number" min="1" max="1000000" value="500"></div>
+            </div>
+            <div class="ml-field"><label class="ml-label" for="ev-ts">Timestamp (UTC ISO)</label>
+              <div class="ml-inputgroup"><input class="form-control ml-input ml-input--mono" id="ev-ts"><button class="btn ml-btn ml-btn--ghost" type="button" id="ev-now">Now</button></div></div>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn ml-btn ml-btn--ink" type="submit" data-magnetic="0.2">Send event</button>
+              <button class="btn ml-btn ml-btn--ghost" type="button" id="ev-retry">Send again (retry)</button>
+            </div>
+            <p class="ml-label mt-4 mb-2">Edge cases</p>
+            <div class="ml-resp">
+              <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="ev-change">Same id, new quantity → 409</button>
+              <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="ev-bad">Unknown meter → 400</button>
+              <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="ev-future">1 h in future → 400</button>
+              <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="ev-closed">Finalized month → 409</button>
+            </div>
+          </form>
+        </section>
+        <section class="ml-card ml-sim-card" aria-labelledby="log-title">
+          <div class="ml-card__head"><div><h2 class="ml-h2" id="log-title">Responses</h2><p class="ml-card__sub">Every request and its status code.</p></div><button class="ml-linkbtn" type="button" id="term-clear">Clear</button></div>
+          <div class="ml-term" id="term" role="log" aria-live="polite"><div class="ml-term__empty">$ waiting for requests…</div></div>
+          <div class="d-flex flex-wrap gap-2 mt-3">
+            <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="batch-fr03">Batch: 3 good · 1 duplicate · 1 bad meter</button>
+            <button class="btn ml-btn ml-btn--ghost ml-btn--sm" type="button" id="batch-big">Batch of 1,001 → 400</button>
+          </div>
+        </section>
+      </div>
+      <section class="ml-panel ml-storm mt-4" aria-labelledby="storm-title">
+        <div class="ml-storm__grid">
+          <div>
+            <span class="ml-eyebrow ml-eyebrow--dark"><i></i>FR-12 · Retry storm</span>
+            <h2 class="ml-hero__title" id="storm-title" style="font-size:clamp(28px,3.4vw,42px)">Hammer it with retries.</h2>
+            <p class="ml-hero__sub mb-3">Unique events for <span id="st-pool">4 tenants</span> in <span id="st-period"></span>, each sent 1 to R times in shuffled order through 500-event batches from parallel workers. Usage must grow by exactly the unique total.</p>
+            <div class="ml-grid-2">
+              <div class="ml-field"><label class="ml-label" for="st-unique">Unique events</label><input class="form-control ml-input ml-num" id="st-unique" type="number" min="1" max="20000" value="20000"></div>
+              <div class="ml-field"><label class="ml-label" for="st-repeats">Max repeats (R)</label><input class="form-control ml-input ml-num" id="st-repeats" type="number" min="1" max="9" value="9"></div>
+              <div class="ml-field"><label class="ml-label" for="st-workers">Workers</label><input class="form-control ml-input ml-num" id="st-workers" type="number" min="1" max="8" value="4"></div>
+              <div class="ml-field"><label class="ml-label" for="st-seed">Seed</label><input class="form-control ml-input ml-num" id="st-seed" type="number" value="7"></div>
+            </div>
+            <button class="btn ml-btn ml-btn--onpanel ml-btn--lg" type="button" id="st-start" data-magnetic="0.2"><svg class="ml-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>Run retry storm</button>
+          </div>
+          <div>
+            <div class="ml-storm__canvas">
+              <canvas id="st-canvas" aria-hidden="true"></canvas>
+              <div class="ml-storm__vault" aria-hidden="true"><svg class="ml-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><strong id="st-vault">0</strong>in ledger</div>
+              <div class="ml-storm__legend" aria-hidden="true"><span><i style="background:var(--accent)"></i>accepted</span><span><i style="background:#dce0de"></i>duplicate</span><span><i style="background:#f87171"></i>rejected</span></div>
+            </div>
+            <div class="ml-counters" aria-live="polite">
+              <div class="ml-counter"><span><i style="background:var(--accent)"></i>Accepted</span><strong id="c-accepted">0</strong></div>
+              <div class="ml-counter"><span><i style="background:#dce0de"></i>Duplicate</span><strong id="c-dup">0</strong></div>
+              <div class="ml-counter"><span><i style="background:#f87171"></i>Rejected</span><strong id="c-rej">0</strong></div>
+            </div>
+            <div class="ml-storm__progress"><div class="ml-progress" aria-hidden="true"><div class="ml-progress__bar" id="st-bar"></div></div><div class="ml-hint" id="st-sent">0 sends</div></div>
+            <div class="ml-check" id="st-check"><span class="ml-check__icon"><svg class="ml-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></span><span>Final check appears here: usage total = expected.</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script type="module" src="js/pages/simulator.js"></script>
+</body>
+</html>
