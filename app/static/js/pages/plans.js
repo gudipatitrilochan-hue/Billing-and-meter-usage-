@@ -4,7 +4,8 @@ import { requireRole, getSession } from "../auth.js";
 import { api } from "../api.js";
 import { mountShell, el, qs, icon, load, toast, errorToast, emptyState } from "../ui.js";
 import { reveal, enhance, countUp, splitWords, pop, reduced } from "../motion.js";
-import { METERS } from "../config.js";
+import { METERS, ITEM_METERS } from "../config.js";
+import { rateFor } from "./shared.js";
 import { buildInvoice, formatINR, formatInt, formatRate, tierLabel, validateTiers, rupeesToPaise } from "../pricing.js";
 
 const gsap = window.gsap;
@@ -44,6 +45,9 @@ function renderCards() {
         el("div", { class: "ml-price__meter" }, icon(m.id === "api_calls" ? "code" : "mail", 13), m.name),
         el("ul", { class: "ml-price__tiers" }, ...p.tiers[m.id].map((t) => el("li", { class: t.per_1000 === 0 ? "is-free" : "" },
           el("span", { text: tierLabel(t) }), el("span", { text: t.per_1000 === 0 ? "Free" : formatRate(t.per_1000) })))))),
+      ...ITEM_METERS.filter((m) => p.tiers[m.id]).map((m) => el("div", {},
+        el("div", { class: "ml-price__meter" }, icon(m.icon, 13), m.name),
+        el("ul", { class: "ml-price__tiers" }, el("li", {}, el("span", { text: `Each ${m.unit}` }), el("span", { text: rateFor(m.id, p.tiers[m.id][0].per_1000) }))))),
       el("div", { class: "ml-price__foot" },
         el("button", { class: `btn ml-btn ml-btn--sm ${featured ? "ml-btn--onpanel" : "ml-btn--panelghost"}`, type: "button", onclick: () => pickInCalc(p.id) }, "Price a month", icon("arrow", 14)),
         isAdmin ? el("button", { class: "btn ml-btn ml-btn--sm ml-btn--panelghost", type: "button", onclick: () => duplicate(p) }, icon("copy", 14), "New version") : null));

@@ -80,15 +80,16 @@ def load_events(conn, data: dict) -> Counter:
 
 def print_totals(conn) -> None:
     rows = conn.execute(TOTALS_SQL.read_text(encoding="utf-8")).fetchall()
-    head = f"{'Tenant':<12} {'Plan':<8} {'Period':<8} {'API calls':>10} {'Emails':>8} {'Events':>7} {'Invoice estimate':>17}"
+    head = f"{'Tenant':<12} {'Plan':<8} {'Period':<8} {'API calls':>10} {'Emails':>8} {'PDFs':>5} {'Events':>7} {'Invoice estimate':>17}"
     print(head)
     print("-" * len(head))
     plans: dict[str, dict] = {}
     for r in rows:
         plan = plans.setdefault(r["plan"], db.load_plan(conn, r["plan"]))
-        est = build_invoice(plan, {"api_calls": r["api_calls"], "emails_sent": r["emails_sent"]})
+        est = build_invoice(plan, {"api_calls": r["api_calls"], "emails_sent": r["emails_sent"],
+                                    "pdf_links": r["pdf_links"]})
         print(f"{r['tenant']:<12} {r['plan']:<8} {r['period']:<8} {r['api_calls']:>10,} "
-              f"{r['emails_sent']:>8,} {r['events']:>7,} {format_inr(est['total_paise']):>17}")
+              f"{r['emails_sent']:>8,} {r['pdf_links']:>5,} {r['events']:>7,} {format_inr(est['total_paise']):>17}")
 
 
 def main(argv: list[str] | None = None) -> None:

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from typing import Mapping, Sequence
 
-METERS = ("api_calls", "emails_sent")
+METERS = ("api_calls", "emails_sent", "pdf_links")
 
 #: A tier as it appears in sample-data.json: {"from": 1, "to": 10000, "per_1000": 0}.
 #: ``to`` is None for the last, open-ended tier.

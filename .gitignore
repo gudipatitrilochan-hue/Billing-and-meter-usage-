@@ -22,3 +22,6 @@ venv/
 
 # Node (frontend)
 node_modules/
+
+# Uploaded PDFs (PDF links feature)
+data/uploads/

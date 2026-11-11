@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-37%20passing-22c55e" alt="37 tests passing">
+  <img src="https://img.shields.io/badge/tests-49%20passing-22c55e" alt="49 tests passing">
   <img src="https://img.shields.io/badge/week-1%20of%204-22c55e" alt="Week 1 of 4">
   <img src="https://img.shields.io/badge/python-3.10%2B-0b0b0c" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/money-integer%20paise-16a34a" alt="Money in integer paise">
@@ -76,6 +76,42 @@ PayNest      growth   2026-09     521,300    8,120     388         ₹7,819.00
 
 The 83 skipped rows are retries planted in the CSV on purpose: a spreadsheet would bill them twice.
 Query the database directly with `sqlite3 -header -column data/meterledger.db < scripts/monthly_totals.sql`.
+
+## PDF links: ₹20 per PDF
+
+A tenant uploads a PDF, the server stores it and returns a link anyone can open, and **₹20 is added to
+that month's bill**. Each upload is one usage event on a new `pdf_links` meter, written with the same
+idempotent `record_event` as every API call, so the charge goes through the normal pricing engine and
+shows as a "PDF links" line on the estimate and the invoice. Every plan prices it the same: one open tier at
+2,000,000 paise per 1,000, which is exactly ₹20 per PDF.
+
+```bash
+python scripts/seed.py                    # once: builds the database and prints each tenant's API key
+uvicorn app.main:app --reload             # http://localhost:8000 (console) · /docs (API)
+```
+
+Open `http://localhost:8000/index.html?api=live`, sign in with a key from the seed output, then go to **PDF links**.
+Or upload from code:
+
+```bash
+curl -X POST http://localhost:8000/api/pdfs \
+  -H "X-Api-Key: $METERLEDGER_KEY" -H "Idempotency-Key: invoice-0042" -F "file=@report.pdf"
+# 201 {"link": "http://localhost:8000/p/…", "charged_paise": 2000, "status": "accepted", …}
+```
+
+| Rule | How |
+|---|---|
+| ₹20 per PDF, on every plan | `pdf_links` tier in `data/sample-data.json`; tests check Free, Starter and Growth |
+| A retry is never charged twice | Same `Idempotency-Key` → same link, `200 duplicate`, `charged_paise: 0` |
+| Only real PDFs, up to 10 MB | Checks the `%PDF-` header: `415 not_a_pdf`, `413 file_too_large`, `400 empty_file` |
+| Links are hard to guess | 24-character random token: `/p/{token}`; unknown tokens are `404` |
+| Nothing is billed for a failed upload | The file is written and the event recorded in one step, or neither |
+| Closed months stay closed | Uploads into a finalized month are `409 period_closed` |
+
+Code: [`app/main.py`](app/main.py) (FastAPI), [`app/pdf_links.py`](app/pdf_links.py), [`app/auth.py`](app/auth.py),
+[`tests/test_pdf_links.py`](tests/test_pdf_links.py), page `app/static/pdfs.html`.
+The server so far covers what this feature needs (`/me`, `/usage`, `/usage/daily`, `/usage/estimate`, `/plans`,
+`/invoices`, `/pdfs`); the rest of PRD Section 9 follows in Week 2.
 
 ## Frontend: the MeterLedger console (S1–S9)
 
@@ -180,6 +216,9 @@ Seven tables in [`app/schema.sql`](app/schema.sql): `meters`, `plans`, `price_ti
 
 ```text
 app/
+  main.py                 FastAPI server: console at /, API under /api, shared PDFs at /p/{token}
+  pdf_links.py            upload a PDF, store it, return a link, bill ₹20 (one pdf_links event)
+  auth.py                 X-Api-Key / X-Admin-Key checks against SHA-256 hashes
   pricing.py              price_tiers(), build_invoice(): pure functions, no I/O
   db.py                   sqlite3 helpers: schema, record_event (idempotent), monthly_usage
   schema.sql              PRD Section 8 data model
@@ -195,13 +234,14 @@ scripts/
 tests/
   test_pricing.py         C1–C6 + tier rules
   test_seed.py            seed totals, retries stored once, keys hashed
+  test_pdf_links.py       ₹20 per PDF on every plan, upload → link, retry charged once, bad files rejected
 frontend-tests/
   pricing.test.mjs        C1–C6 against the JavaScript pricing mirror
 docs/
   BRIEF.md · ARCHITECTURE.md · FRONTEND.md · brand/
 ```
 
-Coming next (PRD Section 7): `app/main.py`, `models.py`, `ingest.py`, `invoices.py`, `auth.py`,
+Coming next (PRD Section 7): `models.py`, `ingest.py`, `invoices.py`,
 `scripts/retry_storm.py`, `analysis/report.py`, `.env.example`.
 
 ## Roadmap

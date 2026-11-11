@@ -2,10 +2,14 @@
 import { el, icon } from "../ui.js";
 import { reduced } from "../motion.js";
 import { formatINR, formatInt, formatRate, freeAllowance, tierLabel } from "../pricing.js";
-import { METERS } from "../config.js";
+import { METERS, ITEM_METERS } from "../config.js";
 
 const gsap = window.gsap;
-const meterName = (id) => (METERS.find((m) => m.id === id) || { name: id }).name;
+const meterName = (id) => ([...METERS, ...ITEM_METERS].find((m) => m.id === id) || { name: id }).name;
+const item = (id) => ITEM_METERS.find((m) => m.id === id);
+export const meterIcon = (id) => (item(id) ? item(id).icon : id === "api_calls" ? "code" : "mail");
+/** "₹20 / 1,000" for metered usage, "₹20 / PDF" for per-item meters. */
+export const rateFor = (meterId, per1000) => (item(meterId) ? `${formatINR(per1000 / 1000).replace(".00", "")} / ${item(meterId).unit}` : formatRate(per1000));
 
 /**
  * Free-tier progress bar for one meter. Pushes an 80% alert banner into `banners` when due.
@@ -44,10 +48,10 @@ export function renderLines({ lines, base_fee_paise }) {
   const rows = [
     el("tr", {}, el("td", { "data-label": "Item" }, el("strong", { text: "Base fee" })), el("td", { "data-label": "Tier", class: "ml-muted", text: "—" }), el("td", { class: "r ml-num ml-muted", "data-label": "Units", text: "—" }), el("td", { class: "r ml-muted", "data-label": "Rate", text: "—" }), el("td", { class: "r ml-num", "data-label": "Amount", text: formatINR(base_fee_paise) })),
     ...lines.map((l) => el("tr", {},
-      el("td", { "data-label": "Item" }, el("span", { class: "ml-meter-tag" }, icon(l.meter_id === "api_calls" ? "code" : "mail", 14), meterName(l.meter_id))),
+      el("td", { "data-label": "Item" }, el("span", { class: "ml-meter-tag" }, icon(meterIcon(l.meter_id), 14), meterName(l.meter_id))),
       el("td", { "data-label": "Tier", text: l.tier_label }),
       el("td", { class: "r ml-num", "data-label": "Units", text: formatInt(l.units) }),
-      el("td", { class: "r ml-num", "data-label": "Rate", text: formatRate(l.price_per_1000_paise) }),
+      el("td", { class: "r ml-num", "data-label": "Rate", text: rateFor(l.meter_id, l.price_per_1000_paise) }),
       el("td", { class: "r ml-num", "data-label": "Amount" }, el("strong", { text: formatINR(l.amount_paise) })))),
   ];
   if (!lines.length) rows.push(el("tr", {}, el("td", { colspan: "5", class: "ml-muted", "data-label": "", text: "No usage in this period — base fee only." })));

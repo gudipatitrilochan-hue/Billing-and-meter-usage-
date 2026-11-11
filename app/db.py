@@ -16,8 +16,10 @@ def db_path() -> Path:
     return Path(os.environ.get("METERLEDGER_DB", DEFAULT_DB))
 
 
-def connect(path: str | os.PathLike | None = None) -> sqlite3.Connection:
-    conn = sqlite3.connect(str(path or db_path()))
+def connect(path: str | os.PathLike | None = None, *, any_thread: bool = False) -> sqlite3.Connection:
+    """Open the database. ``any_thread=True`` lets one request's connection move between the
+    worker threads FastAPI uses for that request (it is still never shared between requests)."""
+    conn = sqlite3.connect(str(path or db_path()), check_same_thread=not any_thread)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn

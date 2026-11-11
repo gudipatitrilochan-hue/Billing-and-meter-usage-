@@ -6,9 +6,9 @@ PRAGMA foreign_keys = ON;
 
 -- Seeded, read-only in the MVP.
 CREATE TABLE IF NOT EXISTS meters (
-    id          TEXT PRIMARY KEY CHECK (id IN ('api_calls', 'emails_sent')),
+    id          TEXT PRIMARY KEY CHECK (id IN ('api_calls', 'emails_sent', 'pdf_links')),
     name        TEXT NOT NULL,
-    unit        TEXT NOT NULL,                      -- 'call' | 'email'
+    unit        TEXT NOT NULL,                      -- 'call' | 'email' | 'pdf'
     aggregation TEXT NOT NULL DEFAULT 'sum' CHECK (aggregation = 'sum')
 );
 
@@ -91,3 +91,19 @@ CREATE TABLE IF NOT EXISTS invoice_lines (
     price_per_1000_paise INTEGER NOT NULL CHECK (price_per_1000_paise >= 0),
     amount_paise         INTEGER NOT NULL CHECK (amount_paise >= 0)
 );
+
+-- PDF links: a tenant uploads a PDF, the server stores the file and returns a link that opens it.
+-- Each upload is also one usage event on the pdf_links meter (priced ₹20 per PDF in every plan),
+-- so the charge flows through the same idempotent usage_events table and pricing engine.
+-- event_id is "pdf-" + the client's Idempotency-Key (or the token), so a retried upload is never billed twice.
+CREATE TABLE IF NOT EXISTS pdf_links (
+    token       TEXT PRIMARY KEY CHECK (length(token) >= 16),   -- unguessable, used in the link /p/{token}
+    tenant_id   TEXT NOT NULL REFERENCES tenants(id),
+    event_id    TEXT NOT NULL,
+    filename    TEXT NOT NULL,
+    size_bytes  INTEGER NOT NULL CHECK (size_bytes > 0),
+    sha256      TEXT NOT NULL,
+    created_at  TEXT NOT NULL,
+    UNIQUE (tenant_id, event_id)
+);
+CREATE INDEX IF NOT EXISTS ix_pdf_links_tenant ON pdf_links (tenant_id, created_at);

@@ -71,6 +71,32 @@ export async function api(path, opts = {}) {
   return payload;
 }
 
+/**
+ * Upload a PDF (₹20 each). Live mode sends multipart/form-data to POST /api/pdfs; mock mode keeps
+ * the file in the browser as a blob: URL and records the same usage event.
+ * @param {File} file
+ * @param {string} idempotencyKey  same key on a retry = same link, charged once
+ */
+export async function uploadPdf(file, idempotencyKey) {
+  if (CONFIG.API_MODE === "mock") {
+    const head = new Uint8Array(await file.slice(0, 5).arrayBuffer());
+    const isPdf = String.fromCharCode(...head) === "%PDF-";
+    const link = isPdf && file.size && file.size <= 10 * 1024 * 1024 ? URL.createObjectURL(file) : null;
+    return api("/pdfs", { method: "POST", body: { filename: file.name, size_bytes: file.size, is_pdf: isPdf, link, idempotency_key: idempotencyKey } });
+  }
+  const form = new FormData();
+  form.append("file", file, file.name);
+  let res;
+  try {
+    res = await fetch(CONFIG.API_BASE + "/pdfs", { method: "POST", headers: { ...authHeaders(), "Idempotency-Key": idempotencyKey }, body: form });
+  } catch (e) {
+    throw new ApiError(0, "unreachable", "Can't reach the billing server");
+  }
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) throw new ApiError(res.status, payload.error || "http_" + res.status, payload.detail || res.statusText);
+  return payload;
+}
+
 export async function resetDemoData() {
   if (CONFIG.API_MODE !== "mock") return;
   const m = await mock();
