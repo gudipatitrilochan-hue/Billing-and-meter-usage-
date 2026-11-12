@@ -16,6 +16,10 @@
   <img src="https://img.shields.io/badge/money-integer%20paise-16a34a" alt="Money in integer paise">
 </p>
 
+<p align="center">
+  <a href="https://gudipatitrilochan-hue.github.io/Billing-and-meter-usage-/"><img src="https://img.shields.io/badge/%E2%96%B6%20Live%20demo-open%20the%20website-22c55e?style=for-the-badge" alt="Live demo: open the website"></a>
+</p>
+
 # MeterLedger: usage-based billing and metering
 
 **PST_AD_162 · FinTech · Usage Metering & Billing Infrastructure**
@@ -34,6 +38,10 @@ an invoice with one line per tier, in exact integer paise.
 🗺️ [Architecture & flow charts](docs/ARCHITECTURE.md) ·
 ✅ [Week 1 summary](docs/WEEK1_SUMMARY.md) ·
 🖥️ [Frontend guide](docs/FRONTEND.md)
+
+> **Live demo:** [gudipatitrilochan-hue.github.io/Billing-and-meter-usage-](https://gudipatitrilochan-hue.github.io/Billing-and-meter-usage-/). It runs in your browser on the built-in mock API,
+> so every screen works without a server. On the sign-in page, click **Billing admin** for the admin console
+> or a tenant such as **ShopKart** for My usage and PDF links. Demo data is saved only in your own browser.
 
 ---
 
@@ -134,6 +142,8 @@ On the sign-in page, **Demo keys** lists the admin key and one key per demo tena
 | S8 Event simulator (with retry storm) · S9 Tenant portal | `simulator.html` · `portal.html` |
 
 Full screen-by-screen guide, theming and the backend hand-off: **[docs/FRONTEND.md](docs/FRONTEND.md)**
+
+The same pages are published at **[the live demo](https://gudipatitrilochan-hue.github.io/Billing-and-meter-usage-/)** (GitHub Pages, branch `gh-pages`, mock API).
 
 ## How the money works
 
