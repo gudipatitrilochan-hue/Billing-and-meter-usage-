@@ -1,0 +1,139 @@
+/* ==========================================================================
+   MeterLedger themes
+   --------------------------------------------------------------------------
+   Every colour in the app comes from these tokens. To add a theme:
+     1. copy one [data-theme] block below and rename it
+     2. add { id, name, swatch } to THEMES in js/theme.js
+   Light/dark is a separate axis (data-mode) so every theme gets both.
+   ========================================================================== */
+
+:root {
+  --font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ---------- Theme: Mint (default, from the reference design) ---------- */
+:root,
+[data-theme="mint"] {
+  --accent: #22c55e;
+  --accent-strong: #16a34a;
+  --accent-soft: #dcfce7;
+  --accent-ink: #052e16;
+  --glow: 134, 239, 172;           /* rgb triplet for spotlights */
+}
+
+[data-theme="iris"] {
+  --accent: #8b5cf6;
+  --accent-strong: #7c3aed;
+  --accent-soft: #ede9fe;
+  --accent-ink: #2e1065;
+  --glow: 196, 181, 253;
+}
+
+[data-theme="amber"] {
+  --accent: #f59e0b;
+  --accent-strong: #d97706;
+  --accent-soft: #fef3c7;
+  --accent-ink: #451a03;
+  --glow: 253, 211, 125;
+}
+
+[data-theme="ocean"] {
+  --accent: #0ea5e9;
+  --accent-strong: #0284c7;
+  --accent-soft: #e0f2fe;
+  --accent-ink: #082f49;
+  --glow: 125, 211, 252;
+}
+
+/* ---------- Light mode ---------- */
+:root,
+[data-mode="light"] {
+  color-scheme: light;
+  --bg: #f3f3f1;
+  --surface: #ffffff;
+  --surface-2: #f7f7f5;
+  --surface-3: #eeeeeb;
+  --ink: #0b0b0c;
+  --ink-2: #55575d;
+  --ink-3: #8a8c92;
+  --line: #e6e6e2;
+  --line-strong: #d4d4cf;
+
+  /* the black hero panels */
+  --panel: #0a0a0a;
+  --panel-2: #141515;
+  --panel-3: #1d1f1e;
+  --panel-ink: #f4f5f3;
+  --panel-ink-2: #a3a6a4;
+  --panel-line: rgba(255, 255, 255, .09);
+
+  --btn-ink-bg: #0b0b0c;
+  --btn-ink-fg: #ffffff;
+
+  --st-draft-bg: #eeeeec;  --st-draft-fg: #4b4d52;
+  --st-final-bg: #dbeafe;  --st-final-fg: #1e40af;
+  --st-paid-bg:  #dcfce7;  --st-paid-fg:  #166534;
+  --st-void-bg:  #fee2e2;  --st-void-fg:  #991b1b;
+
+  --danger: #dc2626;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --info: #2563eb;
+
+  --shadow-sm: 0 1px 2px rgba(10, 10, 10, .05);
+  --shadow-md: 0 8px 24px -12px rgba(10, 10, 10, .18);
+  --shadow-lg: 0 30px 60px -30px rgba(10, 10, 10, .35);
+}
+
+/* ---------- Dark mode ---------- */
+[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #060606;
+  --surface: #0f1010;
+  --surface-2: #151616;
+  --surface-3: #1c1d1d;
+  --ink: #f2f3f1;
+  --ink-2: #a2a5a3;
+  --ink-3: #6f7270;
+  --line: #222423;
+  --line-strong: #2e3130;
+
+  --panel: #0d0e0e;
+  --panel-2: #151717;
+  --panel-3: #1e2120;
+  --panel-ink: #f4f5f3;
+  --panel-ink-2: #a3a6a4;
+  --panel-line: rgba(255, 255, 255, .08);
+
+  --btn-ink-bg: #f4f5f3;
+  --btn-ink-fg: #0b0b0c;
+
+  --st-draft-bg: #232524;  --st-draft-fg: #c4c7c5;
+  --st-final-bg: #172554;  --st-final-fg: #93c5fd;
+  --st-paid-bg:  #052e16;  --st-paid-fg:  #86efac;
+  --st-void-bg:  #450a0a;  --st-void-fg:  #fca5a5;
+
+  --danger: #f87171;
+  --warning: #fbbf24;
+  --warning-soft: #2a1f05;
+  --info: #60a5fa;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, .7);
+  --shadow-lg: 0 30px 60px -30px rgba(0, 0, 0, .9);
+}
+
+[data-mode="dark"] {
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-ink: #ecfdf5;
+}
