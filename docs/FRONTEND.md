@@ -20,19 +20,19 @@ On the sign-in page, **Demo keys** lists the admin key and one key per seeded te
 
 | Screen | File | Highlights |
 |---|---|---|
-| S1 Sign in | `index.html` | Role detected from `GET /me`; animated retry tickets; demo keys |
-| S2 Overview | `overview.html` | Live revenue count-up, daily usage area chart, KPI cards, recent events, top tenants |
+| S1 Sign in | `index.html` | Role detected from `GET /me`; a still example of accepted and duplicate events; demo keys |
+| S2 Overview | `overview.html` | Revenue so far, daily usage area chart, KPI cards, recent events, top tenants |
 | S3 Tenants | `tenants.html` | Search, estimate per tenant, 80% free-tier flag, New tenant (key shown **once**) |
 | S4 Tenant detail | `tenant.html?id=` | Month picker, free-tier bars, daily bar chart, estimate-so-far, change plan, suspend |
-| S5 Plans & pricing | `plans.html` | Tilt plan cards, price calculator with animated tier waterfall, create plan / new version |
+| S5 Plans & pricing | `plans.html` | Plan cards, price calculator with a tier breakdown, create plan / new version |
 | S6 Invoices | `invoices.html` | Generate drafts, status filter, finalize / mark paid / void, totals row, CSV export |
-| S7 Invoice detail | `invoice.html?id=` | Printable sheet, tier lines, timeline, stale-draft warning, confetti on paid |
-| S8 Event simulator | `simulator.html` | Single events + edge cases, FR-03 batch, **retry storm** with particle view and final check |
+| S7 Invoice detail | `invoice.html?id=` | Printable sheet, tier lines, timeline, stale-draft warning |
+| S8 Event simulator | `simulator.html` | Single events + edge cases, FR-03 batch, **retry storm** with a progress bar and final check |
 | S9 Tenant portal | `portal.html` | My usage, free-tier bars, daily chart, my invoices, masked key, sample curl |
 
-Also included: page-transition curtain, ⌘K / Ctrl K command palette, Light/Dark dock with
-theme colours, loading / empty / error / success states on every screen, tables become cards
-under 576px, and a print stylesheet. All motion turns off under `prefers-reduced-motion`.
+Also included: ⌘K / Ctrl K command palette, Light/Dark dock with theme colours, loading / empty /
+error / success states on every screen, tables become cards under 576px, and a print stylesheet.
+The site uses no animation library and no motion: pages, numbers and charts appear at once.
 
 ## Layout
 
@@ -46,7 +46,7 @@ app/static/
   js/pricing.js          price_tiers / build_invoice mirror, integer paise
   js/mock/server.js      in-browser implementation of the API contract
   js/mock/seed.js        3 plans, 8 tenants, 3 months of events (C1 + C2 built in)
-  js/motion.js           GSAP: transitions, reveals, magnetic, tilt, spotlight, count-up, confetti
+  js/motion.js           small no-animation helpers (numbers shown at their final value)
   js/ui.js               shell, toasts, modals, states, palette, theme dock
   js/pages/*.js          one module per screen
 scripts/dev-server.mjs   static server for the frontend phase

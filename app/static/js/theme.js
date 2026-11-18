@@ -30,18 +30,7 @@ export function setTheme(next, origin) {
     save(t);
     window.dispatchEvent(new CustomEvent("ml:themechange", { detail: t }));
   };
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!document.startViewTransition || reduced) return apply();
-  const x = origin ? origin.clientX : innerWidth - 60;
-  const y = origin ? origin.clientY : innerHeight - 40;
-  const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-  const vt = document.startViewTransition(apply);
-  vt.ready.then(() => {
-    root.animate(
-      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-      { duration: 650, easing: "cubic-bezier(.22,1,.36,1)", pseudoElement: "::view-transition-new(root)" }
-    );
-  }).catch(() => {});
+  apply();
 }
 
 /** Read a CSS token (for Chart.js colours). */

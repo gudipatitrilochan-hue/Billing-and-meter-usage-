@@ -6,12 +6,11 @@ import { mountShell, el, qs, qsa, icon, avatar, load, statusPill, monthPicker, s
 import { reveal, pop, confetti, enhance, reduced } from "../motion.js";
 import { formatINR } from "../pricing.js";
 
-const gsap = window.gsap;
 requireRole(["admin"]);
 
 const initial = /^\d{4}-\d{2}$/.test(param("period") || "") ? param("period") : shiftPeriod(currentPeriod(), -1);
 const picker = monthPicker(initial, (p) => { period = p; history.replaceState(null, "", `?period=${p}`); refresh(true); });
-const genBtn = el("button", { class: "btn ml-btn ml-btn--ink", type: "button", "data-magnetic": "0.2" }, icon("refresh", 16), "Generate drafts");
+const genBtn = el("button", { class: "btn ml-btn ml-btn--ink", type: "button" }, icon("refresh", 16), "Generate drafts");
 const exportBtn = el("button", { class: "btn ml-btn ml-btn--ghost", type: "button" }, icon("download", 16), "Export CSV");
 mountShell({ page: "invoices", title: "Invoices", subtitle: "Draft → finalized → paid. Finalized invoices are locked and numbered.", actions: [picker.el, exportBtn, genBtn] });
 
