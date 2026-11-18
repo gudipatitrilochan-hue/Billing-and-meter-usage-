@@ -4,7 +4,6 @@ import { getDemoKeys } from "../api.js";
 import { mountBare, el, qs, toast, icon, param } from "../ui.js";
 import { splitWords, reveal, shake, navigate, reduced } from "../motion.js";
 
-const gsap = window.gsap;
 const next = param("next");
 const existing = getSession();
 if (existing && !next) location.replace(homeFor(existing));
@@ -13,31 +12,14 @@ mountBare();
 splitWords(qs("#hero-title"), 0.35);
 reveal([qs(".ml-auth__pitch"), ...document.querySelectorAll(".ml-auth__chips > *"), ...document.querySelectorAll(".ml-auth__card > *")], { delay: 0.25, stagger: 0.06 });
 
-// ---- floating meter coins + the retry ticket loop ----
-if (gsap && !reduced) {
-  document.querySelectorAll(".ml-orbit").forEach((o, i) => {
-    gsap.from(o, { scale: 0, opacity: 0, duration: 1.1, ease: "elastic.out(1, 0.55)", delay: 0.4 + i * 0.12 });
-    gsap.to(o, { y: i % 2 ? 14 : -14, rotation: i % 2 ? -8 : 8, duration: 2.6 + i * 0.4, ease: "sine.inOut", yoyo: true, repeat: -1, delay: i * 0.3 });
-  });
+// ---- a still picture of the idea: one event, a retry that is skipped, a new event ----
+{
   const stage = qs(".ml-auth__stage");
-  const steps = [
+  [
     { cls: "ok", code: "201 accepted", text: "shk-2026-09-14-0042 · 500 calls" },
     { cls: "dup", code: "200 duplicate", text: "shk-2026-09-14-0042 · retry" },
-    { cls: "dup", code: "200 duplicate", text: "shk-2026-09-14-0042 · retry" },
     { cls: "ok", code: "201 accepted", text: "shk-2026-09-14-0043 · 120 calls" },
-  ];
-  let k = 0;
-  const spawn = () => {
-    const s = steps[k++ % steps.length];
-    const t = el("div", { class: `ml-ticket ml-ticket--${s.cls}` }, el("b", { text: s.code }), s.text);
-    stage.append(t);
-    gsap.timeline({ onComplete: () => t.remove() })
-      .fromTo(t, { y: 150, opacity: 0, scale: 0.92 }, { y: 96, opacity: 1, scale: 1, duration: 0.7, ease: "expo.out" })
-      .to(t, { y: 40, duration: 1.6, ease: "none" })
-      .to(t, { y: 0, opacity: 0, duration: 0.6, ease: "power2.in" });
-  };
-  spawn();
-  setInterval(() => { if (!document.hidden) spawn(); }, 1300);
+  ].forEach((s, i) => stage.append(el("div", { class: `ml-ticket ml-ticket--${s.cls}`, style: { top: `${i * 52}px` } }, el("b", { text: s.code }), s.text)));
 }
 
 // ---- form ----
@@ -83,7 +65,6 @@ if (keys) {
   const fill = (k) => {
     input.value = k;
     input.type = "password";
-    if (gsap && !reduced) gsap.fromTo(input, { boxShadow: "0 0 0 8px rgba(134,239,172,.55)" }, { boxShadow: "0 0 0 0px rgba(134,239,172,0)", duration: 0.9, clearProps: "boxShadow" });
     submit.focus();
   };
   list.append(el("button", { class: "ml-demo__key ml-demo__key--admin", type: "button", onclick: () => fill(keys.admin) }, icon("shield", 16), "Billing admin (Kavya)", el("small", { text: "admin key" })));

@@ -8,7 +8,6 @@ import { countUp, reveal, pop, confetti, shake, reduced } from "../motion.js";
 import { CONFIG } from "../config.js";
 import { formatInt } from "../pricing.js";
 
-const gsap = window.gsap;
 requireRole(["admin"]);
 
 const tenantSel = el("select", { class: "form-select ml-input", id: "sim-tenant", "aria-label": "Send as tenant" });
@@ -30,7 +29,6 @@ function log(code, msg) {
   term.append(line);
   while (term.children.length > 200) term.firstChild.remove();
   term.scrollTop = term.scrollHeight;
-  if (gsap && !reduced) gsap.from(line, { x: -12, opacity: 0, duration: 0.35 });
 }
 qs("#term-clear").addEventListener("click", () => term.replaceChildren(el("div", { class: "ml-term__empty", text: "$ waiting for requests…" })));
 
@@ -53,7 +51,6 @@ const newId = () => {
   const t = tenants.find((x) => x.id === tenantSel.value);
   const prefix = t ? t.id.replace(/^t_/, "").slice(0, 3) : "evt";
   f.id.value = `${prefix}-${new Date().toISOString().slice(0, 10)}-${rid()}`;
-  if (gsap && !reduced) gsap.fromTo(f.id, { boxShadow: "0 0 0 6px rgba(134,239,172,.5)" }, { boxShadow: "0 0 0 0 rgba(134,239,172,0)", duration: 0.8, clearProps: "boxShadow" });
 };
 qs("#ev-gen").addEventListener("click", newId);
 qs("#ev-now").addEventListener("click", () => (f.ts.value = nowIso()));
@@ -219,7 +216,7 @@ async function runStorm() {
     countUp(S.vault, c.accepted, formatInt, { duration: 0.4 });
     S.sent.textContent = `${formatInt(c.sent)} / ${formatInt(totalSends)} sends`;
     const w = (c.sent / totalSends) * 100 + "%";
-    if (gsap && !reduced) gsap.to(S.bar, { width: w, duration: 0.3 }); else S.bar.style.width = w;
+    S.bar.style.width = w;
   };
   await Promise.all(Array.from({ length: workers }, worker));
   paint();
@@ -301,7 +298,6 @@ function particleField(canvas) {
     }
     ctx.globalAlpha = 1;
   };
-  if (gsap && !reduced) gsap.ticker.add(step);
   return {
     burst(ok, dup, rej) {
       if (reduced) return;

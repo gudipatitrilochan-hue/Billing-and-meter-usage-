@@ -6,7 +6,6 @@ import { countUp, reveal, pop, confetti, enhance, reduced } from "../motion.js";
 import { renderLines } from "./shared.js";
 import { formatINR } from "../pricing.js";
 
-const gsap = window.gsap;
 const session = requireRole(["admin", "tenant"]);
 const isAdmin = session.role === "admin";
 const id = param("id");
@@ -71,7 +70,7 @@ function actionsCard() {
     return card;
   }
   const row = el("div", { class: "d-flex gap-2 flex-wrap", id: "stale-slot" });
-  const b = (label, cls, action) => el("button", { class: `btn ml-btn ${cls}`, type: "button", "data-magnetic": "0.15", onclick: (e) => act(action, e) }, label);
+  const b = (label, cls, action) => el("button", { class: `btn ml-btn ${cls}`, type: "button", onclick: (e) => act(action, e) }, label);
   if (inv.status === "draft") row.append(b("Finalize invoice", "ml-btn--ink", "finalize"));
   if (inv.status === "finalized") row.append(b("Mark paid (mock)", "ml-btn--accent", "pay"), b("Void", "ml-btn--ghost", "void"));
   card.append(row);
@@ -97,8 +96,7 @@ function animateTimeline() {
   const last = done[done.length - 1];
   const h = last ? last.offsetTop + 8 : 0;
   const fill = qs(".ml-timeline__fill", list);
-  if (gsap && !reduced) gsap.fromTo(fill, { height: 0 }, { height: h, duration: 1, ease: "expo.out", delay: 0.4 });
-  else fill.style.height = h + "px";
+  fill.style.height = h + "px";
 }
 
 async function checkStale() {

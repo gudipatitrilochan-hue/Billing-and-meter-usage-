@@ -5,11 +5,10 @@ import { mountShell, el, qs, icon, avatar, load, statusPill, planBadge, openModa
 import { reveal, pop, enhance, confetti, reduced } from "../motion.js";
 import { formatINR, formatInt, freeAllowance } from "../pricing.js";
 
-const gsap = window.gsap;
 requireRole(["admin"]);
 
 const search = el("input", { class: "form-control ml-input", type: "search", placeholder: "Search tenants…", "aria-label": "Search tenants", id: "tenant-search" });
-const newBtn = el("button", { class: "btn ml-btn ml-btn--ink", type: "button", "data-magnetic": "0.2" }, icon("plus", 16), "New tenant");
+const newBtn = el("button", { class: "btn ml-btn ml-btn--ink", type: "button" }, icon("plus", 16), "New tenant");
 mountShell({
   page: "tenants",
   title: "Tenants",

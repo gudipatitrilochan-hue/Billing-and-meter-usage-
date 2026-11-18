@@ -9,7 +9,6 @@ import { api, ApiError, resetDemoData } from "./api.js";
 import { initMotion, enhance, reveal, navigate, reduced } from "./motion.js";
 import { THEMES, getTheme, setTheme } from "./theme.js";
 
-const gsap = window.gsap;
 
 // ---------------- DOM helpers ----------------
 
@@ -115,7 +114,6 @@ export function monthPicker(initial, onChange, { min } = {}) {
   const go = (d) => {
     value = shiftPeriod(value, d);
     sync();
-    if (gsap && !reduced) gsap.fromTo(label, { y: d * -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35 });
     onChange(value);
   };
   prev.addEventListener("click", () => go(-1));
@@ -162,15 +160,13 @@ export function toast(message, { type = "info", action, timeout = 4200, title } 
   );
   const close = () => {
     if (!t.isConnected) return;
-    if (gsap && !reduced) gsap.to(t, { x: 40, opacity: 0, height: 0, marginTop: 0, paddingTop: 0, paddingBottom: 0, duration: 0.35, onComplete: () => t.remove() });
-    else t.remove();
+    t.remove();
   };
   if (action) {
     t.append(el("button", { class: "ml-toast__action", type: "button", onclick: () => { close(); action.onClick(); } }, action.label));
   }
   t.append(el("button", { class: "ml-toast__close", type: "button", "aria-label": "Dismiss", onclick: close }, icon("close", 14)));
   toastHost().append(t);
-  if (gsap && !reduced) gsap.from(t, { x: 60, opacity: 0, duration: 0.5, ease: "back.out(1.6)" });
   if (timeout) setTimeout(close, timeout);
   return close;
 }
@@ -252,9 +248,6 @@ export function openModal({ title, body, footer, size = "", onClose, labelledBy 
   modal.addEventListener("shown.bs.modal", () => {
     const f = modal.querySelector("[autofocus], input, select, textarea");
     if (f) f.focus();
-  });
-  modal.addEventListener("show.bs.modal", () => {
-    if (gsap && !reduced) gsap.fromTo(content, { y: 30, scale: 0.96, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.4)", delay: 0.05 });
   });
   modal.addEventListener("hidden.bs.modal", () => { modal.remove(); onClose && onClose(); });
   bs.show();
@@ -373,7 +366,7 @@ export function mountShell({ page, title, subtitle, actions = [] } = {}) {
     const right = session
       ? [el("span", { class: "ml-topnav__who" }, avatar(session.tenant.name), el("span", { text: session.tenant.name })),
          el("button", { class: "btn ml-btn ml-btn--ghost ml-btn--sm", type: "button", onclick: signOut }, icon("logout", 15), "Sign out")]
-      : [el("a", { class: "btn ml-btn ml-btn--ink ml-btn--sm", href: "index.html", "data-magnetic": "0.2" }, "Sign in")];
+      : [el("a", { class: "btn ml-btn ml-btn--ink ml-btn--sm", href: "index.html" }, "Sign in")];
     const bar = el("header", { class: "ml-topnav" },
       el("div", { class: "ml-topnav__inner" }, logo(), el("nav", { class: "ml-topnav__links", "aria-label": "Main" }, ...links), el("div", { class: "ml-topnav__right" }, modeBadge(), ...right)));
     app.prepend(bar);
@@ -407,9 +400,9 @@ function moveIndicator(nav, animate = true) {
   const active = nav.querySelector(".is-active");
   const ind = nav.querySelector(".ml-nav__indicator");
   if (!active || !ind) return;
-  const props = { y: active.offsetTop, height: active.offsetHeight, opacity: 1 };
-  if (gsap && animate && !reduced) gsap.to(ind, { ...props, duration: 0.45, ease: "expo.out" });
-  else if (gsap) gsap.set(ind, props);
+  ind.style.transform = `translateY(${active.offsetTop}px)`;
+  ind.style.height = active.offsetHeight + "px";
+  ind.style.opacity = "1";
 }
 
 function toggleSide(open) {
@@ -418,15 +411,7 @@ function toggleSide(open) {
   if (!side) return;
   side.classList.toggle("is-open", open);
   scrim.classList.toggle("is-open", open);
-  if (open) {
-    if (gsap && !reduced) {
-      gsap.fromTo(side, { xPercent: -100 }, { xPercent: 0, duration: 0.5, ease: "expo.out" });
-      gsap.from(side.querySelectorAll(".ml-nav__item"), { x: -20, opacity: 0, stagger: 0.04, delay: 0.1 });
-    }
-    side.querySelector("a, button")?.focus();
-  } else if (gsap && !reduced) {
-    gsap.set(side, { clearProps: "transform" });
-  }
+  if (open) side.querySelector("a, button")?.focus();
 }
 
 async function confirmReset() {
@@ -461,13 +446,13 @@ function mountThemeDock() {
     dark.setAttribute("aria-pressed", String(t.mode === "dark"));
     pop.querySelectorAll(".ml-swatch").forEach((b, i) => b.setAttribute("aria-checked", String(THEMES[i].id === t.theme)));
     const on = t.mode === "light" ? light : dark;
-    if (gsap) gsap.to(thumb, { x: on.offsetLeft - 4, width: on.offsetWidth, duration: reduced ? 0 : 0.45, ease: "expo.out" });
+    thumb.style.transform = `translateX(${on.offsetLeft - 4}px)`;
+    thumb.style.width = on.offsetWidth + "px";
   };
   const closePop = () => {
     if (pop.hidden) return;
     pal.setAttribute("aria-expanded", "false");
-    if (gsap && !reduced) gsap.to(pop, { y: 8, opacity: 0, duration: 0.2, onComplete: () => (pop.hidden = true) });
-    else pop.hidden = true;
+    pop.hidden = true;
   };
   light.addEventListener("click", (e) => { setTheme({ mode: "light" }, e); syncDock(); });
   dark.addEventListener("click", (e) => { setTheme({ mode: "dark" }, e); syncDock(); });
@@ -475,10 +460,6 @@ function mountThemeDock() {
     if (!pop.hidden) return closePop();
     pop.hidden = false;
     pal.setAttribute("aria-expanded", "true");
-    if (gsap && !reduced) {
-      gsap.fromTo(pop, { y: 10, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" });
-      gsap.from(pop.querySelectorAll(".ml-swatch"), { y: 8, opacity: 0, stagger: 0.04, delay: 0.05 });
-    }
   });
   document.addEventListener("click", (e) => { if (!dock.contains(e.target)) closePop(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePop(); });
@@ -486,7 +467,6 @@ function mountThemeDock() {
   // Re-measure once web fonts settle and on resize, so the thumb always sits under the active segment.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncDock);
   window.addEventListener("resize", syncDock);
-  if (gsap && !reduced) gsap.from(dock, { y: 40, opacity: 0, duration: 0.8, delay: 0.4, ease: "expo.out" });
 }
 
 // ---------------- command palette ----------------
@@ -526,8 +506,7 @@ export async function openPalette() {
   };
   const close = () => {
     paletteOpen = false;
-    if (gsap && !reduced) gsap.to(overlay, { opacity: 0, duration: 0.2, onComplete: () => overlay.remove() });
-    else overlay.remove();
+    overlay.remove();
   };
   const go = (it) => { close(); navigate(it.href); };
   input.addEventListener("input", () => { active = 0; render(); });
@@ -541,10 +520,6 @@ export async function openPalette() {
   overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
   render();
   input.focus();
-  if (gsap && !reduced) {
-    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.2 });
-    gsap.fromTo(box, { y: -20, scale: 0.97, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.45, ease: "back.out(1.5)" });
-  }
   if (session.role === "admin") {
     try {
       const [tenants, invoices] = await Promise.all([api("/tenants", { latency: false }), api("/invoices", { latency: false })]);
