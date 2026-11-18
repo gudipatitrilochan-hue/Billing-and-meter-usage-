@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-page="simulator">
-  <div class="ml-curtain" aria-hidden="true"><div class="ml-curtain__mark"><span class="ml-logo-dot"></span>MeterLedger</div></div>
   <a class="ml-skip" href="#main">Skip to content</a>
   <div class="ml-app">
     <main id="main" class="ml-main" tabindex="-1">
@@ -34,7 +33,7 @@
             <div class="ml-field"><label class="ml-label" for="ev-ts">Timestamp (UTC ISO)</label>
               <div class="ml-inputgroup"><input class="form-control ml-input ml-input--mono" id="ev-ts"><button class="btn ml-btn ml-btn--ghost" type="button" id="ev-now">Now</button></div></div>
             <div class="d-flex flex-wrap gap-2">
-              <button class="btn ml-btn ml-btn--ink" type="submit" data-magnetic="0.2">Send event</button>
+              <button class="btn ml-btn ml-btn--ink" type="submit">Send event</button>
               <button class="btn ml-btn ml-btn--ghost" type="button" id="ev-retry">Send again (retry)</button>
             </div>
             <p class="ml-label mt-4 mb-2">Edge cases</p>
@@ -67,7 +66,7 @@
               <div class="ml-field"><label class="ml-label" for="st-workers">Workers</label><input class="form-control ml-input ml-num" id="st-workers" type="number" min="1" max="8" value="4"></div>
               <div class="ml-field"><label class="ml-label" for="st-seed">Seed</label><input class="form-control ml-input ml-num" id="st-seed" type="number" value="7"></div>
             </div>
-            <button class="btn ml-btn ml-btn--onpanel ml-btn--lg" type="button" id="st-start" data-magnetic="0.2"><svg class="ml-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>Run retry storm</button>
+            <button class="btn ml-btn ml-btn--onpanel ml-btn--lg" type="button" id="st-start"><svg class="ml-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>Run retry storm</button>
           </div>
           <div>
             <div class="ml-storm__canvas">
@@ -88,8 +87,6 @@
     </main>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script type="module" src="js/pages/simulator.js"></script>
 </body>

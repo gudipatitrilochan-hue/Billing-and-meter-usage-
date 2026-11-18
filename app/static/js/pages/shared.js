@@ -4,7 +4,6 @@ import { reduced } from "../motion.js";
 import { formatINR, formatInt, formatRate, freeAllowance, tierLabel } from "../pricing.js";
 import { METERS, ITEM_METERS } from "../config.js";
 
-const gsap = window.gsap;
 const meterName = (id) => ([...METERS, ...ITEM_METERS].find((m) => m.id === id) || { name: id }).name;
 const item = (id) => ITEM_METERS.find((m) => m.id === id);
 export const meterIcon = (id) => (item(id) ? item(id).icon : id === "api_calls" ? "code" : "mail");
@@ -25,11 +24,7 @@ export function renderMeterBars(meterId, used, plan, banners = [], voice = "admi
   const pct = (used / allowance) * 100;
   const bar = el("div", { class: "ml-progress__bar" });
   const wrap = el("div", { class: `ml-progress ${pct > 100 ? "is-over" : pct >= 80 ? "is-warn" : ""}`, role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(allowance), "aria-valuenow": String(Math.min(used, allowance)), "aria-label": `${meterName(meterId)} free tier used` }, bar);
-  requestAnimationFrame(() => {
-    const w = Math.min(100, pct) + "%";
-    if (gsap && !reduced) gsap.to(bar, { width: w, duration: 1.4, ease: "expo.out", delay: 0.2 });
-    else bar.style.width = w;
-  });
+  bar.style.width = Math.min(100, pct) + "%";
   if (pct >= 80) {
     const who = voice === "tenant" ? "You have" : `${tenantName} has`;
     const noun = meterId === "api_calls" ? "API calls" : "emails";

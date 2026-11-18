@@ -8,7 +8,6 @@ import { METERS, ITEM_METERS } from "../config.js";
 import { rateFor } from "./shared.js";
 import { buildInvoice, formatINR, formatInt, formatRate, tierLabel, validateTiers, rupeesToPaise } from "../pricing.js";
 
-const gsap = window.gsap;
 const session = requireRole(["admin", "tenant", "public"]);
 const isAdmin = session && session.role === "admin";
 mountShell({
@@ -35,7 +34,7 @@ function renderCards() {
   const cards = plans.map((p) => {
     const featured = mine ? p.id === mine : p.id === "starter";
     const fee = p.base_fee_paise;
-    const card = el("article", { class: `ml-price ${featured ? "ml-price--featured" : ""}`, "data-tilt": "5", "aria-label": `${p.name} plan` },
+    const card = el("article", { class: `ml-price ${featured ? "ml-price--featured" : ""}`, "aria-label": `${p.name} plan` },
       el("div", { class: "ml-price__name" }, el("span", { text: p.name }),
         mine === p.id ? el("span", { class: "ml-eyebrow ml-eyebrow--dark" }, el("i"), "Your plan")
           : featured ? el("span", { class: "ml-eyebrow ml-eyebrow--dark" }, el("i"), "Popular")
@@ -54,7 +53,6 @@ function renderCards() {
     return card;
   });
   grid.replaceChildren(...cards);
-  if (gsap && !reduced) gsap.from(cards, { y: 50, opacity: 0, rotationX: -12, duration: 0.9, stagger: 0.1, ease: "expo.out", delay: 0.2, clearProps: "opacity" });
   enhance(grid);
 }
 
@@ -126,8 +124,7 @@ function computeCalc() {
       ...rows.map((r) => r.row)),
     el("div", { class: "ml-calc__total" }, el("span", { class: "ml-muted", text: `Total on ${plan.name}` }), total));
   for (const r of rows) {
-    if (gsap && !reduced) gsap.fromTo(r.fill, { width: "0%" }, { width: r.pct * 100 + "%", duration: 0.9, ease: "expo.out", delay: r.delay });
-    else r.fill.style.width = r.pct * 100 + "%";
+    r.fill.style.width = r.pct * 100 + "%";
   }
   countUp(total, inv.total, formatINR, { from: lastTotal, duration: 0.8 });
   lastTotal = inv.total;
@@ -138,8 +135,7 @@ function pickInCalc(id) {
   const sel = qs("#calc-plan");
   sel.value = id;
   sel.dispatchEvent(new Event("change"));
-  qs("#calc").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-  if (gsap && !reduced) gsap.fromTo("#calc", { boxShadow: "0 0 0 0 rgba(134,239,172,0)" }, { boxShadow: "0 0 0 6px rgba(134,239,172,.45)", duration: 0.4, yoyo: true, repeat: 1, delay: 0.4, clearProps: "boxShadow" });
+  qs("#calc").scrollIntoView({ block: "center" });
 }
 
 // ---------- create plan (admin) ----------
@@ -158,7 +154,7 @@ function duplicate(p) {
     tiers: Object.fromEntries(METERS.map((m) => [m.id, p.tiers[m.id].map((t) => ({ to: t.to == null ? "" : String(t.to), price: (t.per_1000 / 100).toString() }))])),
   };
   renderCreate();
-  qs("#create").scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  qs("#create").scrollIntoView({ block: "start" });
   qs("#cp-id").focus();
 }
 
@@ -203,7 +199,6 @@ function renderCreate() {
   function showErr(msg) {
     err.replaceChildren(icon("alert", 18), el("span", { text: msg }));
     err.classList.remove("d-none");
-    if (gsap && !reduced) gsap.fromTo(err, { x: -6 }, { x: 0, duration: 0.4, ease: "elastic.out(1, 0.3)" });
   }
   box.replaceChildren(
     el("div", { class: "ml-card__head" }, el("div", {}, el("h2", { class: "ml-h2", text: "Create a plan" }), el("p", { class: "ml-card__sub", text: "Plans on a finalized invoice are locked; publish a new version instead. Tiers must start at 1 and be contiguous." }))),
@@ -240,8 +235,6 @@ function tierEditor(m) {
     last.to = String(prevTo + 10000);
     rows.push({ to: "", price: last.price });
     paint();
-    const newRow = rowsBox.lastElementChild;
-    if (gsap && !reduced) gsap.from(newRow, { height: 0, opacity: 0, y: -10, duration: 0.4 });
   } }, icon("plus", 14), "Add tier");
   wrap.append(rowsBox, add);
   return wrap;

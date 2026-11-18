@@ -6,7 +6,6 @@ import { countUp, reveal, enhance, reduced } from "../motion.js";
 import { formatINR, formatInt } from "../pricing.js";
 import { areaChart } from "../charts.js";
 
-const gsap = window.gsap;
 requireRole(["admin"]);
 mountShell({
   page: "overview",
@@ -31,7 +30,7 @@ for (const k of KPIS) {
   const value = el("div", { class: "ml-kpi__value", text: "—" });
   const foot = el("div", { class: "ml-kpi__foot", text: " " });
   kpiEls[k.id] = { value, foot, k };
-  kpiWrap.append(el("div", { class: "ml-glass", "data-tilt": "4" },
+  kpiWrap.append(el("div", { class: "ml-glass" },
     el("div", { class: "ml-kpi__label" }, el("span", { class: "ml-kpi__icon" }, icon(k.icon, 14)), k.label), value, foot));
 }
 
@@ -69,11 +68,7 @@ function renderRank(list) {
       el("div", {}, el("a", { class: "ml-rank__name", href: `tenant.html?id=${encodeURIComponent(t.tenant_id)}`, text: t.name }),
         el("div", { class: "ml-rank__bar" }, bar)),
       el("strong", { class: "ml-num", text: formatINR(t.estimate_paise) }));
-    requestAnimationFrame(() => {
-      const w = (t.estimate_paise / max) * 100 + "%";
-      if (gsap && !reduced) gsap.to(bar, { width: w, duration: 1.2, ease: "expo.out", delay: 0.3 });
-      else bar.style.width = w;
-    });
+    bar.style.width = (t.estimate_paise / max) * 100 + "%";
     return li;
   }));
 }

@@ -123,7 +123,7 @@ The server so far covers what this feature needs (`/me`, `/usage`, `/usage/daily
 
 ## Frontend: the MeterLedger console (S1–S9)
 
-All nine PRD screens are built with HTML, CSS, JavaScript modules and GSAP animations, with light and dark themes.
+All nine PRD screens are built with plain HTML, CSS and JavaScript modules (no animation library, no motion effects), with light and dark themes.
 Until the FastAPI backend lands, they run on an in-browser **mock API** that follows the PRD Section 9 contract,
 so switching to the real backend is one setting (`API_MODE` in `app/static/js/config.js`).
 
@@ -232,7 +232,7 @@ app/
   pricing.py              price_tiers(), build_invoice(): pure functions, no I/O
   db.py                   sqlite3 helpers: schema, record_event (idempotent), monthly_usage
   schema.sql              PRD Section 8 data model
-  static/                 frontend: one HTML page per screen, css/, js/ (GSAP motion, mock API)
+  static/                 frontend: one HTML page per screen, css/, js/ (mock API, charts)
 data/
   sample-data.json        meters, 3 plans with tiers, 6 tenants
   cloud_api_usage_sample.csv   simulated metering export, 3 months, with planted retries
